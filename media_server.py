@@ -30,6 +30,19 @@ def brave_next():
         '''
     ])
 
+# # Netflix specific
+def brave_netflix_next():
+    subprocess.run([
+        "osascript", "-e",
+        '''
+        tell application "Brave Browser"
+            tell front window to tell active tab
+                execute javascript "var nextBtn = document.querySelector('button[data-uia=\\\"control-next\\\"]'); if(nextBtn) { nextBtn.click(); }"
+            end tell
+        end tell
+        '''
+    ])
+
 # Previous Episode → Shift+P
 def brave_prev():
     subprocess.run([
@@ -79,6 +92,11 @@ def playpause():
 @app.route("/next")
 def next_track():
     brave_next()
+    return "Next sent to Brave"
+
+@app.route("/netflix/next")
+def next_netflix_track():
+    brave_netflix_next()
     return "Next sent to Brave"
 
 @app.route("/prev")
