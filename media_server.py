@@ -44,6 +44,29 @@ def brave_prev():
         '''
     ])
 
+# Volume Controls
+def volume_up():
+    subprocess.run([
+        "osascript", "-e",
+        '''
+        set currentVolume to output volume of (get volume settings)
+        if currentVolume < 100 then
+            set volume output volume (currentVolume + 10)
+        end if
+        '''
+    ])
+
+def volume_down():
+    subprocess.run([
+        "osascript", "-e",
+        '''
+        set currentVolume to output volume of (get volume settings)
+        if currentVolume > 0 then
+            set volume output volume (currentVolume - 10)
+        end if
+        '''
+    ])
+
 @app.route("/")
 def index():
     return send_from_directory(".", "index.html")
@@ -62,6 +85,16 @@ def next_track():
 def prev_track():
     brave_prev()
     return "Previous sent to Brave"
+
+@app.route("/volume/up")
+def vol_up():
+    volume_up()
+    return "Volume increased"
+
+@app.route("/volume/down")
+def vol_down():
+    volume_down()
+    return "Volume decreased"
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
