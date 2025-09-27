@@ -43,20 +43,6 @@ def brave_netflix_next():
         '''
     ])
 
-# Previous Episode → Shift+P
-def brave_prev():
-    subprocess.run([
-        "osascript", "-e",
-        '''
-        tell application "Brave Browser"
-            activate
-            tell application "System Events"
-                key code 35 using shift down -- 35 = 'P'
-            end tell
-        end tell
-        '''
-    ])
-
 # Volume Controls
 def volume_up():
     subprocess.run([
@@ -98,11 +84,6 @@ def next_track():
 def next_netflix_track():
     brave_netflix_next()
     return "Next sent to Brave"
-
-@app.route("/prev")
-def prev_track():
-    brave_prev()
-    return "Previous sent to Brave"
 
 @app.route("/volume/up")
 def vol_up():
