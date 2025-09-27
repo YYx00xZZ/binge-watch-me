@@ -17,19 +17,6 @@ def brave_playpause():
         '''
     ])
 
-def brave_next():
-    subprocess.run([
-        "osascript", "-e",
-        '''
-        tell application "Brave Browser"
-            activate
-            tell application "System Events"
-                key code 45 using shift down -- 45 is 'N', shift makes it Shift+N
-            end tell
-        end tell
-        '''
-    ])
-
 # # Netflix specific
 def brave_netflix_next():
     subprocess.run([
@@ -74,11 +61,6 @@ def index():
 def playpause():
     brave_playpause()
     return "Play/Pause sent to Brave"
-
-@app.route("/next")
-def next_track():
-    brave_next()
-    return "Next sent to Brave"
 
 @app.route("/netflix/next")
 def next_netflix_track():
