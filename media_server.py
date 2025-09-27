@@ -1,5 +1,6 @@
-from flask import Flask, send_from_directory
+import time
 import subprocess
+from flask import Flask, send_from_directory
 
 app = Flask(__name__)
 
@@ -19,6 +20,8 @@ def brave_playpause():
 
 # # Netflix specific
 def brave_netflix_next():
+    brave_playpause()
+    time.sleep(0.2)
     subprocess.run([
         "osascript", "-e",
         '''
