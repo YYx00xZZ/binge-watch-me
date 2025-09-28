@@ -28,6 +28,7 @@ def brave_playpause():
         "osascript", "-e",
         '''
         tell application "Brave Browser"
+            activate
             tell application "System Events"
                 keystroke space
             end tell
@@ -35,8 +36,9 @@ def brave_playpause():
         '''
     ])
 
-# Netflix specific
+# # Netflix specific
 def brave_netflix_next():
+    brave_focus()
     brave_playpause()
     time.sleep(0.2)
     subprocess.run([
@@ -44,7 +46,7 @@ def brave_netflix_next():
         '''
         tell application "Brave Browser"
             tell front window to tell active tab
-                execute javascript "var nextBtn = document.querySelector('button[data-uia=\\"control-next\\"]'); if(nextBtn) { nextBtn.click(); }"
+                execute javascript "var nextBtn = document.querySelector('button[data-uia=\\\"control-next\\\"]'); if(nextBtn) { nextBtn.click(); }"
             end tell
         end tell
         '''
