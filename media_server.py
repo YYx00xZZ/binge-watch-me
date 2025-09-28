@@ -4,13 +4,30 @@ from flask import Flask, send_from_directory
 
 app = Flask(__name__)
 
+# Function to focus Brave
+def brave_focus():
+    subprocess.run([
+        "osascript", "-e",
+        '''
+        tell application "System Events"
+            if (name of processes) contains "Brave Browser" then
+                tell application "Brave Browser" to activate
+            else
+                tell application "Brave Browser" to launch
+                delay 1
+                tell application "Brave Browser" to activate
+            end if
+        end tell
+        '''
+    ])
+
 # Functions to control Brave/Netflix
 def brave_playpause():
+    brave_focus()
     subprocess.run([
         "osascript", "-e",
         '''
         tell application "Brave Browser"
-            activate
             tell application "System Events"
                 keystroke space
             end tell
@@ -18,7 +35,7 @@ def brave_playpause():
         '''
     ])
 
-# # Netflix specific
+# Netflix specific
 def brave_netflix_next():
     brave_playpause()
     time.sleep(0.2)
@@ -27,7 +44,7 @@ def brave_netflix_next():
         '''
         tell application "Brave Browser"
             tell front window to tell active tab
-                execute javascript "var nextBtn = document.querySelector('button[data-uia=\\\"control-next\\\"]'); if(nextBtn) { nextBtn.click(); }"
+                execute javascript "var nextBtn = document.querySelector('button[data-uia=\\"control-next\\"]'); if(nextBtn) { nextBtn.click(); }"
             end tell
         end tell
         '''
@@ -35,6 +52,7 @@ def brave_netflix_next():
 
 # Volume Controls
 def volume_up():
+    brave_focus()
     subprocess.run([
         "osascript", "-e",
         '''
@@ -46,6 +64,7 @@ def volume_up():
     ])
 
 def volume_down():
+    brave_focus()
     subprocess.run([
         "osascript", "-e",
         '''
