@@ -4,8 +4,26 @@ from flask import Flask, send_from_directory
 
 app = Flask(__name__)
 
+# Function to focus Brave
+def brave_focus():
+    subprocess.run([
+        "osascript", "-e",
+        '''
+        tell application "System Events"
+            if (name of processes) contains "Brave Browser" then
+                tell application "Brave Browser" to activate
+            else
+                tell application "Brave Browser" to launch
+                delay 1
+                tell application "Brave Browser" to activate
+            end if
+        end tell
+        '''
+    ])
+
 # Functions to control Brave/Netflix
 def brave_playpause():
+    brave_focus()
     subprocess.run([
         "osascript", "-e",
         '''
@@ -35,6 +53,7 @@ def brave_netflix_next():
 
 # Volume Controls
 def volume_up():
+    brave_focus()
     subprocess.run([
         "osascript", "-e",
         '''
@@ -46,6 +65,7 @@ def volume_up():
     ])
 
 def volume_down():
+    brave_focus()
     subprocess.run([
         "osascript", "-e",
         '''
