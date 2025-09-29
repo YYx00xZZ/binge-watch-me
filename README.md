@@ -22,5 +22,4 @@ You can make it work in other ways too, the project is very simple.
    - Hitting those endpoints directly from other clients works too (e.g., home automation scripts).
 
 ## Notes
-- The automation scripts assume Brave has the active Netflix tab. Adjust the AppleScript blocks in `media_server.py` if you need different shortcuts or another browser.
-
+- The automation scripts assume Brave has the active Netflix tab.
