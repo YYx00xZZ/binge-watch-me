@@ -59,7 +59,7 @@ def volume_up():
         '''
         set currentVolume to output volume of (get volume settings)
         if currentVolume < 100 then
-            set volume output volume (currentVolume + 10)
+            set volume output volume (currentVolume + 5)
         end if
         '''
     ])
@@ -71,7 +71,7 @@ def volume_down():
         '''
         set currentVolume to output volume of (get volume settings)
         if currentVolume > 0 then
-            set volume output volume (currentVolume - 10)
+            set volume output volume (currentVolume - 5)
         end if
         '''
     ])
