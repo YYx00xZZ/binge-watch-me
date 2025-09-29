@@ -38,7 +38,6 @@ def brave_playpause():
 
 # # Netflix specific
 def brave_netflix_next():
-    brave_focus()
     brave_playpause()
     time.sleep(0.2)
     subprocess.run([
