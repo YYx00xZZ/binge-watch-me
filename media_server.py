@@ -21,6 +21,27 @@ def brave_focus():
         '''
     ])
 
+def brave_neflix_show_media_controls():
+    """
+    Brings up Netflix media controls in Brave on macOS by simulating a key press.
+
+    This uses AppleScript via `osascript` to send the F15 key (key code 113),
+    which is typically unmapped and safe. Netflix treats any key press as
+    user activity and will display its media control overlay without affecting
+    playback. 
+
+    Notes:
+        - Requires Accessibility and Automation permissions for the terminal/Python.
+        - Logs are not printed in this function; only the simulated key press runs.
+        - For more detailed logging with timestamps, wrap the call and log around it.
+    """
+    subprocess.run([
+        "osascript", "-e",
+        '''
+        tell application "System Events" to key code 113
+        '''
+    ])
+
 # Functions to control Brave/Netflix
 def brave_playpause():
     brave_focus()
@@ -38,8 +59,8 @@ def brave_playpause():
 
 # # Netflix specific
 def brave_netflix_next():
-    brave_playpause()
-    time.sleep(0.2)
+    brave_focus()
+    brave_neflix_show_media_controls()
     subprocess.run([
         "osascript", "-e",
         '''
