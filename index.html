@@ -14,7 +14,9 @@
   <br>
   <button onclick="send('volume/down')">🔉 Volume Down</button>
   <button onclick="send('volume/up')">🔊 Volume Up</button>
-
+  <br>
+  <button onclick="send('seek/backward/10')">-10s</button>
+  <button onclick="send('seek/forward/10')">+10s</button>
   <script>
     function send(action) {
       fetch(`/${action}`)

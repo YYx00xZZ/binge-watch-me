@@ -95,6 +95,34 @@ def volume_down():
         '''
     ])
 
+def brave_netflix_seek_backward_10():
+    """
+    Simulates pressing the Left Arrow key on macOS.
+    """
+
+    subprocess.run([
+        "osascript", "-e",
+        '''
+        tell application "System Events"
+            key code 123 -- Left Arrow
+        end tell
+        '''
+    ])
+
+def brave_netflix_seek_forward_10():
+    """
+    Simulates pressing the Right Arrow key on macOS.
+    """
+
+    subprocess.run([
+        "osascript", "-e",
+        '''
+        tell application "System Events"
+            key code 124 -- Right Arrow
+        end tell
+        '''
+    ])
+
 @app.route("/")
 def index():
     return send_from_directory(".", "index.html")
@@ -118,6 +146,20 @@ def vol_up():
 def vol_down():
     volume_down()
     return "Volume decreased"
+
+@app.route("/seek/backward/10")
+def seek_backward_10():
+    brave_focus()
+    brave_neflix_show_media_controls()
+    brave_netflix_seek_backward_10()
+    return "-10s"
+
+@app.route("/seek/forward/10")
+def seek_forward_10():
+    brave_focus()
+    brave_neflix_show_media_controls()
+    brave_netflix_seek_forward_10()
+    return "+10s"
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
