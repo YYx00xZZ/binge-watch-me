@@ -74,7 +74,6 @@ def brave_netflix_next():
 
 # Volume Controls
 def volume_up():
-    brave_focus()
     subprocess.run([
         "osascript", "-e",
         '''
@@ -86,7 +85,6 @@ def volume_up():
     ])
 
 def volume_down():
-    brave_focus()
     subprocess.run([
         "osascript", "-e",
         '''
