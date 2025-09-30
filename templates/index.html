@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Netflix Controller</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+  <style>
+    body {
+      text-align: center;
+      margin-top: 2rem;
+    }
+    h1 {
+      margin-bottom: 2rem;
+    }
+    .btn-lg {
+      font-size: 1.2rem;
+      padding: 1rem;
+    }
+    .row {
+      margin-bottom: 1rem;
+    }
+    html, body {
+      touch-action: pan-x pan-y;   /* allow scroll but no zoom */
+    }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <h1>🎬 Netflix Controller</h1>
+
+    <!-- Play / Next -->
+    <div class="row">
+      <div class="col-6">
+        <button class="btn btn-outline-primary btn-lg w-100" onclick="send('playpause')">⏯ Play/Pause</button>
+      </div>
+      <div class="col-6">
+        <button class="btn btn-outline-primary btn-lg w-100" onclick="send('netflix/next')">⏭ Next</button>
+      </div>
+    </div>
+
+    <!-- Volume -->
+    <div class="row">
+      <div class="col-6">
+        <button class="btn btn-secondary btn-lg w-100" onclick="send('volume/down')">🔉 Volume Down</button>
+      </div>
+      <div class="col-6">
+        <button class="btn btn-secondary btn-lg w-100" onclick="send('volume/up')">🔊 Volume Up</button>
+      </div>
+    </div>
+
+    <!-- Seek -->
+    <div class="row">
+      <div class="col-6">
+        <button class="btn btn-info btn-lg w-100" onclick="send('seek/backward/10')">⏪ -10s</button>
+      </div>
+      <div class="col-6">
+        <button class="btn btn-info btn-lg w-100" onclick="send('seek/forward/10')">⏩ +10s</button>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    function send(action) {
+      fetch(`/${action}`)
+        .then(r => r.text())
+        .then(t => console.log(t));
+    }
+  </script>
+</body>
+</html>

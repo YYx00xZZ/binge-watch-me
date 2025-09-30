@@ -1,6 +1,6 @@
 import time
 import subprocess
-from flask import Flask, send_from_directory
+from flask import Flask, render_template
 
 app = Flask(__name__)
 
@@ -125,7 +125,7 @@ def brave_netflix_seek_forward_10():
 
 @app.route("/")
 def index():
-    return send_from_directory(".", "index.html")
+    return render_template("index.html")
 
 @app.route("/playpause")
 def playpause():
