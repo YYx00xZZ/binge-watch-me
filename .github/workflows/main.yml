@@ -39,7 +39,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: BingeWatchMe-macos-arm64
-          path: dist/MyApp-BingeWatchMe-arm64.zip
+          path: dist/BingeWatchMe-arm64.zip
 
       # 7. Release only on tags
       - name: Create GitHub Release
