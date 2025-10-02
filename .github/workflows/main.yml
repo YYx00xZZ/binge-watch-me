@@ -1,0 +1,51 @@
+name: Build & Release Binge Watch Me
+
+on:
+  push:
+    branches: ["*"]   # build on all branches
+    tags:
+      - "v*"          # and also on version tags
+
+jobs:
+  build-macos:
+    runs-on: macos-14
+    steps:
+      # 1. Checkout
+      - uses: actions/checkout@v4
+
+      # 2. Set up Python (Apple Silicon arm64)
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13.7"
+          architecture: arm64
+
+      # 3. Install dependencies
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyinstaller -r requirements.txt
+
+      # 4. Build app with PyInstaller
+      - name: Build app
+        run: pyinstaller BingeWatchMe.spec
+
+      # 5. Package app
+      - name: Package
+        run: |
+          cd dist
+          zip -r BingeWatchMe-arm64.zip BingeWatchMe.app
+
+      # 6. Upload artifact for CI verification
+      - uses: actions/upload-artifact@v4
+        with:
+          name: BingeWatchMe-macos-arm64
+          path: dist/MyApp-BingeWatchMe-arm64.zip
+
+      # 7. Release only on tags
+      - name: Create GitHub Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/MyApp-macos-arm64.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
