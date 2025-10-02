@@ -1,4 +1,4 @@
-name: ./env
+name: /Users/alexander/Develop/binge-watch-me/env
 channels:
   - defaults
 dependencies:
@@ -29,8 +29,11 @@ dependencies:
       - itsdangerous==2.2.0
       - jinja2==3.1.6
       - markupsafe==3.0.2
+      - pillow==11.3.0
       - pyobjc-core==11.1
       - pyobjc-framework-cocoa==11.1
       - pyobjc-framework-quartz==11.1
+      - pystray==0.19.5
+      - six==1.17.0
       - werkzeug==3.1.3
-prefix: /Users/alexander/watch-on-me/env
+prefix: /Users/alexander/Develop/binge-watch-me/env
