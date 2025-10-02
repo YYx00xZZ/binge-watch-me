@@ -4,7 +4,7 @@ on:
   push:
     branches: ["*"]   # build on all branches
     tags:
-      - "v*"          # and also on version tags
+      - "v*"          # also trigger on version tags
 
 jobs:
   build-macos:
@@ -35,17 +35,27 @@ jobs:
           cd dist
           zip -r BingeWatchMe-arm64.zip BingeWatchMe.app
 
-      # 6. Upload artifact for CI verification
+      # 6. Upload artifact
       - uses: actions/upload-artifact@v4
         with:
           name: BingeWatchMe-macos-arm64
           path: dist/BingeWatchMe-arm64.zip
 
-      # 7. Release only on tags
+  release:
+    runs-on: macos-14
+    needs: build-macos
+    if: startsWith(github.ref, 'refs/tags/')
+    steps:
+      # 1. Download artifact from build job
+      - uses: actions/download-artifact@v4
+        with:
+          name: BingeWatchMe-macos-arm64
+          path: dist
+
+      # 2. Create GitHub Release
       - name: Create GitHub Release
-        if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v2
         with:
-          files: dist/MyApp-macos-arm64.zip
+          files: dist/BingeWatchMe-arm64.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
