@@ -1,3 +1,5 @@
+import os
+import sys
 import pystray
 import threading
 import subprocess
@@ -6,6 +8,13 @@ from PIL import Image
 from flask import Flask, render_template
 
 app = Flask(__name__)
+
+def resource_path(relative_path: str) -> str:
+    """ Get absolute path to resource, works for dev and PyInstaller """
+    if hasattr(sys, '_MEIPASS'):
+        # Running from PyInstaller bundle
+        return os.path.join(sys._MEIPASS, relative_path)
+    return os.path.join(os.path.abspath("."), relative_path)
 
 # Brave + Netflix controls
 
@@ -184,7 +193,7 @@ if __name__ == "__main__":
     flask_thread.start()
 
     # Load tray icon image (PNG, e.g. 16x16 or 32x32 transparent)
-    icon_image = Image.open("static/images/controller_white.png")
+    icon_image = Image.open(resource_path("static/images/controller_white.png"))
 
     # Create system tray menu
     icon = pystray.Icon(
