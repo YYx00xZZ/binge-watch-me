@@ -30,7 +30,7 @@ exe = EXE(
     a.scripts,
     [],
     exclude_binaries=True,
-    name='media_server',
+    name='BingeWatchMe',
     console=False,
     icon='controller_black_app_icon.icns'
 )
@@ -47,7 +47,7 @@ coll = COLLECT(
 
 app = BUNDLE(
     coll,
-    name='media_server.app',
+    name='BingeWatchMe.app',
     icon='controller_black_app_icon.icns',
     bundle_identifier=None
 )

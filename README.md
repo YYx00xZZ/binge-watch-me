@@ -25,5 +25,6 @@ You can make it work in other ways too, the project is very simple.
 - The automation scripts assume Brave has the active Netflix tab.
 
 ## Build
-run pyinstaller media_server.spec
-run ./dist/media_server.app/Contents/MacOS/media_server
+run pyinstaller BingeWatchMe.spec
+run ./dist/BingeWatchMe.app/Contents/MacOS/BingeWatchMe
+create .dmg hdiutil create -volname MyApp -srcfolder dist/MyApp.app -ov -format UDZO MyApp.dmg
