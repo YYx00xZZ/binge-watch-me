@@ -1,10 +1,14 @@
-import time
+import pystray
+import threading
 import subprocess
+import webbrowser
+from PIL import Image
 from flask import Flask, render_template
 
 app = Flask(__name__)
 
-# Function to focus Brave
+# Brave + Netflix controls
+
 def brave_focus():
     subprocess.run([
         "osascript", "-e",
@@ -161,5 +165,37 @@ def seek_forward_10():
     brave_netflix_seek_forward_10()
     return "+10s"
 
+# Flask runner
+
+def run_flask():
+    app.run(host="0.0.0.0", port=5000, debug=False)
+
+# Tray icon integration
+
+def on_open(icon, item):
+    webbrowser.open("http://127.0.0.1:5000")
+
+def on_quit(icon, item):
+    icon.stop()
+
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    # Start Flask in background
+    flask_thread = threading.Thread(target=run_flask, daemon=True)
+    flask_thread.start()
+
+    # Load tray icon image (PNG, e.g. 16x16 or 32x32 transparent)
+    icon_image = Image.open("static/images/controller_white.png")
+
+    # Create system tray menu
+    icon = pystray.Icon(
+        "Netflix Controller",
+        icon_image,
+        "Netflix Remote",
+        menu=pystray.Menu(
+            pystray.MenuItem("Open Web UI", on_open),
+            pystray.MenuItem("Quit", on_quit)
+        )
+    )
+
+    # Run the tray loop
+    icon.run()
