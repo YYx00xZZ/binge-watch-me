@@ -16,10 +16,16 @@ You can make it work in other ways too, the project is very simple.
 2. Activate it: `conda activate ./env`
 
 ## Run
+### From source
 1. Start the Flask server: `python media_server.py`
 2. Open the controller UI in a browser on the same network: `http://<host-ip>:5000/`
    - The page calls REST endpoints like `/playpause`, `/next`, `/netflix/next`, `/prev`, `/volume/up`, and `/volume/down`.
    - Hitting those endpoints directly from other clients works too (e.g., home automation scripts).
+
+### From release
+Because we are poor developers, we can't afford to sign the app.
+To run it from the release, please hold shift+right click on the app when you download it.
+It will ask if you are sure you want to trust the author or something like this. Do you want to trust us ? Alwasy think twice.
 
 ## Notes
 - The automation scripts assume Brave has the active Netflix tab.
