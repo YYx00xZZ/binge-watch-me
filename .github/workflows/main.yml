@@ -63,6 +63,7 @@ jobs:
           tag_name: ${{ github.ref_name }}
           release_name: "Binge Watch Me ${{ github.ref_name }}"
           draft: false
+          generate_release_notes: true
           prerelease: true
 
       - name: Upload Release Asset
