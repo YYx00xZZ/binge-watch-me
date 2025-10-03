@@ -1,6 +1,6 @@
 # Binge Watch Me
 
-Lightweight Flask server that exposes playback and volume controls for Netflix running in Brave on macOS. The server serves a simple web remote (`index.html`) and bridges button presses to AppleScript shortcuts.
+Lightweight Flask server that exposes playback and volume controls. For now, it works with Netflix running in Brave on macOS. The server serves a simple web remote (`index.html`) and bridges button presses to AppleScript shortcuts.
 
 ## Requirements
 - The terminal that is running the script must have Accessabillity permissions
