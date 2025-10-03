@@ -34,3 +34,6 @@ It will ask if you are sure you want to trust the author or something like this.
 run pyinstaller BingeWatchMe.spec
 run ./dist/BingeWatchMe.app/Contents/MacOS/BingeWatchMe
 create .dmg hdiutil create -volname MyApp -srcfolder dist/MyApp.app -ov -format UDZO MyApp.dmg
+
+# Disclaimer
+This project is not affiliated with, endorsed by, or associated with Netflix, Brave, or any other third party mentioned. All trademarks are the property of their respective owners.
