@@ -16,16 +16,28 @@ You can make it work in other ways too, the project is very simple.
 2. Activate it: `conda activate ./env`
 
 ## Run
+Because we are poor developers, we can't afford to sign the app. Steps on how to run it:
+
 ### From source
-1. Start the Flask server: `python media_server.py`
-2. Open the controller UI in a browser on the same network: `http://<host-ip>:5000/`
-   - The page calls REST endpoints like `/playpause`, `/next`, `/netflix/next`, `/prev`, `/volume/up`, and `/volume/down`.
-   - Hitting those endpoints directly from other clients works too (e.g., home automation scripts).
+1. Get the code
+2. Install dependencies
+3. Start the app: `python media_server.py`
+4. Go to MacOS Settings -> Privacy & Security -> Accessability and allow your terminal or IDE
+5. In Brave, enable View -> Developer -> Allow JavaScript from AppleEvents
 
 ### From release
-Because we are poor developers, we can't afford to sign the app.
-To run it from the release, please hold shift+right click on the app when you download it.
-It will ask if you are sure you want to trust the author or something like this. Do you want to trust us ? Alwasy think twice.
+1. Download the executable from [the release section of the project](https://github.com/YYx00xZZ/binge-watch-me/releases)
+2. Move it to Applications folder
+3. While holding Shift, right click the app and hit Open
+
+   You will see the following warning message:
+   ```
+   macOS cannot verify the developer of “BingeWatchMe”. Are you sure you want to open it?
+   ```
+   if you want to run it, click Yes.
+4. Go to MacOS Settings -> Privacy & Security -> Accessability and allow BingeWatchMe
+5. In Brave, enable View -> Developer -> Allow JavaScript from AppleEvents
+
 
 ## Notes
 - The automation scripts assume Brave has the active Netflix tab.
