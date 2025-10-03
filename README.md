@@ -24,6 +24,7 @@ Because we are poor developers, we can't afford to sign the app. Steps on how to
 3. Start the app: `python media_server.py`
 4. Go to MacOS Settings -> Privacy & Security -> Accessability and allow your terminal or IDE
 5. In Brave, enable View -> Developer -> Allow JavaScript from AppleEvents
+6. The app also require access to Automation under Settings -> Privacy & Security -> Automation. This is usually given automatically but you can check just to be sure
 
 ### From release
 1. Download the executable from [the release section of the project](https://github.com/YYx00xZZ/binge-watch-me/releases)
@@ -37,7 +38,7 @@ Because we are poor developers, we can't afford to sign the app. Steps on how to
    if you want to run it, click Yes.
 4. Go to MacOS Settings -> Privacy & Security -> Accessability and allow BingeWatchMe
 5. In Brave, enable View -> Developer -> Allow JavaScript from AppleEvents
-
+6. The app also require access to Automation under Settings -> Privacy & Security -> Automation. This is usually given automatically but you can check just to be sure
 
 ## Notes
 - The automation scripts assume Brave has the active Netflix tab.
