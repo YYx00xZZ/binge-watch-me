@@ -5,9 +5,7 @@ import threading
 import subprocess
 import webbrowser
 from PIL import Image
-from flask import Flask, render_template
-
-app = Flask(__name__)
+from flask import Flask, Blueprint, render_template
 
 def resource_path(relative_path: str) -> str:
     """ Get absolute path to resource, works for dev and PyInstaller """
@@ -16,27 +14,12 @@ def resource_path(relative_path: str) -> str:
         return os.path.join(sys._MEIPASS, relative_path)
     return os.path.join(os.path.abspath("."), relative_path)
 
-# Brave + Netflix controls
 
-def brave_focus():
-    subprocess.run([
-        "osascript", "-e",
-        '''
-        tell application "System Events"
-            if (name of processes) contains "Brave Browser" then
-                tell application "Brave Browser" to activate
-            else
-                tell application "Brave Browser" to launch
-                delay 1
-                tell application "Brave Browser" to activate
-            end if
-        end tell
-        '''
-    ])
+# System generic controls
 
-def brave_neflix_show_media_controls():
+def simulate_activity():
     """
-    Brings up Netflix media controls in Brave on macOS by simulating a key press.
+    Useful to bring up media controls by simulating a key press.
 
     This uses AppleScript via `osascript` to send the F15 key (key code 113),
     which is typically unmapped and safe. Netflix treats any key press as
@@ -55,37 +38,6 @@ def brave_neflix_show_media_controls():
         '''
     ])
 
-# Functions to control Brave/Netflix
-def brave_playpause():
-    brave_focus()
-    subprocess.run([
-        "osascript", "-e",
-        '''
-        tell application "Brave Browser"
-            activate
-            tell application "System Events"
-                keystroke space
-            end tell
-        end tell
-        '''
-    ])
-
-# # Netflix specific
-def brave_netflix_next():
-    brave_focus()
-    brave_neflix_show_media_controls()
-    subprocess.run([
-        "osascript", "-e",
-        '''
-        tell application "Brave Browser"
-            tell front window to tell active tab
-                execute javascript "var nextBtn = document.querySelector('button[data-uia=\\\"control-next\\\"]'); if(nextBtn) { nextBtn.click(); }"
-            end tell
-        end tell
-        '''
-    ])
-
-# Volume Controls
 def volume_up():
     subprocess.run([
         "osascript", "-e",
@@ -107,12 +59,87 @@ def volume_down():
         end if
         '''
     ])
+# END System generic controls
 
-def brave_netflix_seek_backward_10():
+
+# Brave generic controls
+
+def brave_focus():
+    subprocess.run([
+        "osascript", "-e",
+        '''
+        tell application "System Events"
+            if (name of processes) contains "Brave Browser" then
+                tell application "Brave Browser" to activate
+            else
+                tell application "Brave Browser" to launch
+                delay 1
+                tell application "Brave Browser" to activate
+            end if
+        end tell
+        '''
+    ])
+# END Brave generic controls
+
+system_generic_bp = Blueprint('system-generic', __name__, url_prefix='/system-generic')
+brave_generic_bp = Blueprint('brave-generic', __name__, url_prefix='/brave-generic')
+netflix_bp = Blueprint('netflix', __name__, url_prefix='/netflix')
+
+app = Flask(__name__)
+
+@app.route("/")
+def index():
+    return render_template("index.html")
+
+@brave_generic_bp.route("/playpause")
+def brave_playpause():
+    brave_focus()
+    subprocess.run([
+        "osascript", "-e",
+        '''
+        tell application "Brave Browser"
+            activate
+            tell application "System Events"
+                keystroke space
+            end tell
+        end tell
+        '''
+    ])
+    return "Play/Pause sent to Brave"
+
+@netflix_bp.route("/next")
+def next_netflix_track():
+    brave_focus()
+    simulate_activity()
+    subprocess.run([
+        "osascript", "-e",
+        '''
+        tell application "Brave Browser"
+            tell front window to tell active tab
+                execute javascript "var nextBtn = document.querySelector('button[data-uia=\\\"control-next\\\"]'); if(nextBtn) { nextBtn.click(); }"
+            end tell
+        end tell
+        '''
+    ])
+    return "Next sent to Brave"
+
+@system_generic_bp.route("/volume/up")
+def vol_up():
+    volume_up()
+    return "Volume increased"
+
+@system_generic_bp.route("/volume/down")
+def vol_down():
+    volume_down()
+    return "Volume decreased"
+
+@netflix_bp.route("/seek/backward/10")
+def seek_backward_10():
+    brave_focus()
+    simulate_activity()
     """
     Simulates pressing the Left Arrow key on macOS.
     """
-
     subprocess.run([
         "osascript", "-e",
         '''
@@ -121,12 +148,15 @@ def brave_netflix_seek_backward_10():
         end tell
         '''
     ])
+    return "-10s"
 
-def brave_netflix_seek_forward_10():
+@netflix_bp.route("/seek/forward/10")
+def seek_forward_10():
+    brave_focus()
+    simulate_activity()
     """
     Simulates pressing the Right Arrow key on macOS.
     """
-
     subprocess.run([
         "osascript", "-e",
         '''
@@ -135,44 +165,11 @@ def brave_netflix_seek_forward_10():
         end tell
         '''
     ])
-
-@app.route("/")
-def index():
-    return render_template("index.html")
-
-@app.route("/playpause")
-def playpause():
-    brave_playpause()
-    return "Play/Pause sent to Brave"
-
-@app.route("/netflix/next")
-def next_netflix_track():
-    brave_netflix_next()
-    return "Next sent to Brave"
-
-@app.route("/volume/up")
-def vol_up():
-    volume_up()
-    return "Volume increased"
-
-@app.route("/volume/down")
-def vol_down():
-    volume_down()
-    return "Volume decreased"
-
-@app.route("/seek/backward/10")
-def seek_backward_10():
-    brave_focus()
-    brave_neflix_show_media_controls()
-    brave_netflix_seek_backward_10()
-    return "-10s"
-
-@app.route("/seek/forward/10")
-def seek_forward_10():
-    brave_focus()
-    brave_neflix_show_media_controls()
-    brave_netflix_seek_forward_10()
     return "+10s"
+
+app.register_blueprint(system_generic_bp)
+app.register_blueprint(brave_generic_bp)
+app.register_blueprint(netflix_bp)
 
 # Flask runner
 
