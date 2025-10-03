@@ -32,7 +32,7 @@
     <!-- Play / Next -->
     <div class="row">
       <div class="col-6">
-        <button class="btn btn-outline-primary btn-lg w-100" onclick="send('playpause')">⏯ Play/Pause</button>
+        <button class="btn btn-outline-primary btn-lg w-100" onclick="send('brave-generic/playpause')">⏯ Play/Pause</button>
       </div>
       <div class="col-6">
         <button class="btn btn-outline-primary btn-lg w-100" onclick="send('netflix/next')">⏭ Next</button>
@@ -42,20 +42,20 @@
     <!-- Volume -->
     <div class="row">
       <div class="col-6">
-        <button class="btn btn-secondary btn-lg w-100" onclick="send('volume/down')">🔉 Volume Down</button>
+        <button class="btn btn-secondary btn-lg w-100" onclick="send('system-generic/volume/down')">🔉 Volume Down</button>
       </div>
       <div class="col-6">
-        <button class="btn btn-secondary btn-lg w-100" onclick="send('volume/up')">🔊 Volume Up</button>
+        <button class="btn btn-secondary btn-lg w-100" onclick="send('system-generic/volume/up')">🔊 Volume Up</button>
       </div>
     </div>
 
     <!-- Seek -->
     <div class="row">
       <div class="col-6">
-        <button class="btn btn-info btn-lg w-100" onclick="send('seek/backward/10')">⏪ -10s</button>
+        <button class="btn btn-info btn-lg w-100" onclick="send('netflix/seek/backward/10')">⏪ -10s</button>
       </div>
       <div class="col-6">
-        <button class="btn btn-info btn-lg w-100" onclick="send('seek/forward/10')">⏩ +10s</button>
+        <button class="btn btn-info btn-lg w-100" onclick="send('netflix/seek/forward/10')">⏩ +10s</button>
       </div>
     </div>
   </main>
