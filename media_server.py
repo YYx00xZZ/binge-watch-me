@@ -1,11 +1,73 @@
+import logging
 import os
 import sys
-import pystray
 import threading
 import subprocess
 import webbrowser
+from collections import deque
+
+import pystray
 from PIL import Image
-from flask import Flask, Blueprint, render_template
+from flask import Flask, Blueprint, render_template, jsonify
+
+
+class LogStorage:
+    def __init__(self, max_entries: int = 500):
+        self._entries = deque(maxlen=max_entries)
+        self._lock = threading.Lock()
+
+    def append(self, entry: str) -> None:
+        with self._lock:
+            self._entries.append(entry)
+
+    def snapshot(self) -> list[str]:
+        with self._lock:
+            return list(self._entries)
+
+
+class InMemoryLogHandler(logging.Handler):
+    def __init__(self, storage: LogStorage):
+        super().__init__()
+        self._storage = storage
+
+    def emit(self, record: logging.LogRecord) -> None:
+        try:
+            message = self.format(record)
+            self._storage.append(message)
+        except Exception:  # noqa: BLE001
+            self.handleError(record)
+
+
+log_storage = LogStorage()
+LOGS_PAGE_URL = "http://127.0.0.1:5000/logs"
+
+
+def configure_logging() -> logging.Logger:
+    formatter = logging.Formatter(
+        "%(asctime)s - %(levelname)s - %(message)s",
+        "%Y-%m-%d %H:%M:%S",
+    )
+    root_logger = logging.getLogger()
+    root_logger.setLevel(logging.INFO)
+
+    if not root_logger.handlers:
+        stream_handler = logging.StreamHandler()
+        stream_handler.setFormatter(formatter)
+        root_logger.addHandler(stream_handler)
+
+    if not any(isinstance(handler, InMemoryLogHandler) for handler in root_logger.handlers):
+        in_memory_handler = InMemoryLogHandler(log_storage)
+        in_memory_handler.setFormatter(formatter)
+        root_logger.addHandler(in_memory_handler)
+
+    werkzeug_logger = logging.getLogger('werkzeug')
+    werkzeug_logger.setLevel(logging.INFO)
+    werkzeug_logger.propagate = True
+
+    return logging.getLogger("binge_watch_me")
+
+
+logger = configure_logging()
 
 def resource_path(relative_path: str) -> str:
     """ Get absolute path to resource, works for dev and PyInstaller """
@@ -28,9 +90,9 @@ def simulate_activity():
 
     Notes:
         - Requires Accessibility and Automation permissions for the terminal/Python.
-        - Logs are not printed in this function; only the simulated key press runs.
-        - For more detailed logging with timestamps, wrap the call and log around it.
+        - Invocation is logged so you can verify activity from the tray log viewer.
     """
+    logger.info("Simulating Netflix activity overlay via F15 key press")
     subprocess.run([
         "osascript", "-e",
         '''
@@ -39,6 +101,7 @@ def simulate_activity():
     ])
 
 def volume_up():
+    logger.info("Increasing system volume by 5%")
     subprocess.run([
         "osascript", "-e",
         '''
@@ -50,6 +113,7 @@ def volume_up():
     ])
 
 def volume_down():
+    logger.info("Lowering system volume by 5%")
     subprocess.run([
         "osascript", "-e",
         '''
@@ -65,6 +129,7 @@ def volume_down():
 # Brave generic controls
 
 def brave_focus():
+    logger.info("Ensuring Brave Browser is focused")
     subprocess.run([
         "osascript", "-e",
         '''
@@ -86,13 +151,28 @@ brave_generic_bp = Blueprint('brave-generic', __name__, url_prefix='/brave-gener
 netflix_bp = Blueprint('netflix', __name__, url_prefix='/netflix')
 
 app = Flask(__name__)
+app.logger.handlers = logging.getLogger().handlers
+app.logger.setLevel(logging.INFO)
+app.logger.propagate = True
 
 @app.route("/")
 def index():
     return render_template("index.html")
 
+
+@app.route("/logs")
+def logs_page():
+    return render_template("logs.html")
+
+
+@app.route("/logs/data")
+def logs_data():
+    return jsonify({"entries": log_storage.snapshot()})
+
+
 @brave_generic_bp.route("/playpause")
 def brave_playpause():
+    logger.info("Play/Pause requested from web remote")
     brave_focus()
     subprocess.run([
         "osascript", "-e",
@@ -109,6 +189,7 @@ def brave_playpause():
 
 @netflix_bp.route("/next")
 def next_netflix_track():
+    logger.info("Next episode requested for Netflix")
     brave_focus()
     simulate_activity()
     subprocess.run([
@@ -125,16 +206,19 @@ def next_netflix_track():
 
 @system_generic_bp.route("/volume/up")
 def vol_up():
+    logger.info("Volume up requested")
     volume_up()
     return "Volume increased"
 
 @system_generic_bp.route("/volume/down")
 def vol_down():
+    logger.info("Volume down requested")
     volume_down()
     return "Volume decreased"
 
 @netflix_bp.route("/seek/backward/10")
 def seek_backward_10():
+    logger.info("Seeking Netflix backward 10 seconds")
     brave_focus()
     simulate_activity()
     """
@@ -152,6 +236,7 @@ def seek_backward_10():
 
 @netflix_bp.route("/seek/forward/10")
 def seek_forward_10():
+    logger.info("Seeking Netflix forward 10 seconds")
     brave_focus()
     simulate_activity()
     """
@@ -174,20 +259,32 @@ app.register_blueprint(netflix_bp)
 # Flask runner
 
 def run_flask():
+    logger.info("Starting Flask server on http://0.0.0.0:5000")
     app.run(host="0.0.0.0", port=5000, debug=False)
+
 
 # Tray icon integration
 
 def on_open(icon, item):
+    logger.info("Opening web remote UI from tray")
     webbrowser.open("http://127.0.0.1:5000")
 
+
+def on_open_logs(icon, item):
+    logger.info("Opening logs view from tray")
+    webbrowser.open(LOGS_PAGE_URL)
+
+
 def on_quit(icon, item):
+    logger.info("Stopping tray icon and shutting down application")
     icon.stop()
 
 if __name__ == "__main__":
+    logger.info("Launching Binge Watch Me controller")
     # Start Flask in background
     flask_thread = threading.Thread(target=run_flask, daemon=True)
     flask_thread.start()
+    logger.info("Flask server thread started")
 
     # Load tray icon image (PNG, e.g. 16x16 or 32x32 transparent)
     icon_image = Image.open(resource_path("static/images/controller_white.png"))
@@ -199,9 +296,12 @@ if __name__ == "__main__":
         "Netflix Remote",
         menu=pystray.Menu(
             pystray.MenuItem("Open Web UI", on_open),
+            pystray.MenuItem("View Logs", on_open_logs),
             pystray.MenuItem("Quit", on_quit)
         )
     )
 
     # Run the tray loop
+    logger.info("System tray icon running")
     icon.run()
+    logger.info("Tray icon stopped")

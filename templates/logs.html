@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Binge Watch Me - Logs</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+  <style>
+    body {
+      background-color: #f8f9fa;
+    }
+    main {
+      padding: 2rem 0;
+    }
+    .log-output {
+      height: 65vh;
+      overflow-y: auto;
+      font-family: "SFMono-Regular", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 0.9rem;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between mb-3">
+      <h1 class="h3 mb-3 mb-md-0">Application Logs</h1>
+      <div>
+        <a class="btn btn-outline-primary" href="{{ url_for('index') }}">Back to Remote</a>
+      </div>
+    </div>
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <div id="log-output" class="log-output text-body-secondary">Loading logs...</div>
+      </div>
+    </div>
+  </main>
+  <script>
+    const logOutput = document.getElementById('log-output');
+
+    async function fetchLogs() {
+      try {
+        const response = await fetch("{{ url_for('logs_data') }}", { cache: 'no-store' });
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const data = await response.json();
+        const entries = data.entries || [];
+        logOutput.textContent = entries.length ? entries.join('\n') : 'No logs yet.';
+        logOutput.scrollTop = logOutput.scrollHeight;
+      } catch (error) {
+        console.error('Failed to fetch logs', error);
+        logOutput.textContent = 'Unable to load logs. Check the console for details.';
+      }
+    }
+
+    fetchLogs();
+    setInterval(fetchLogs, 2000);
+  </script>
+</body>
+</html>
