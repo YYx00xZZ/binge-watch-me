@@ -1,0 +1,19 @@
+# Rust / Cargo
+target/
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Environment
+.env
+.env.local
+
+# Logs
+*.log

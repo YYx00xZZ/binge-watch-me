@@ -1,0 +1,53 @@
+[package]
+name = "binge-watch-me"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "binge-watch-me"
+path = "src/main.rs"
+
+[dependencies]
+# Async runtime
+tokio = { version = "1", features = ["full"] }
+
+# Web server
+axum = { version = "0.7", features = ["ws"] }
+
+# Tray icon
+tray-icon = "0.19"
+
+# Serialization
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+# Embed frontend assets into binary
+rust-embed = "8"
+
+# mDNS local network discovery
+mdns-sd = "0.11"
+
+# Auto updater
+self_update = { version = "0.42", features = ["archive-tar", "archive-zip", "compression-flate2", "compression-zip-deflate"] }
+
+# QR code generation
+qrcode = "0.14"
+image = "0.25"
+
+# Keychain / secret storage
+keyring = "3"
+
+# Logging
+tracing = "0.1"
+tracing-subscriber = "0.3"
+
+# Tower HTTP utilities (static file serving)
+tower-http = { version = "0.5", features = ["fs", "cors"] }
+coreaudio-sys = "0.2.17"
+objc2-app-kit = "0.3.2"
+objc2-foundation = "0.3.2"
+objc2 = "0.6.4"
+
+[target.'cfg(target_os = "macos")'.dependencies]
+# macOS native APIs — we'll use these for volume and key simulation
+core-foundation = "0.9"

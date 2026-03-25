@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <title>binge-watch-me</title>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <div id="app">
+
+    <!-- Connection status -->
+    <div id="status" class="status disconnected">
+      <span id="status-text">Connecting...</span>
+    </div>
+
+    <!-- Now playing info -->
+    <div id="now-playing">
+      <div id="site-badge" class="badge">netflix</div>
+      <div id="title">Nothing playing</div>
+    </div>
+
+    <!-- Progress bar -->
+    <div id="progress-container">
+      <span id="current-time">0:00</span>
+      <div id="progress-bar">
+        <div id="progress-fill"></div>
+      </div>
+      <span id="duration">0:00</span>
+    </div>
+
+    <!-- Playback controls -->
+    <div id="controls">
+      <!-- <button class="btn btn-secondary" id="btn-seek-back" title="- 10s">
+        -10s
+      </button> -->
+      <button class="btn btn-primary" id="btn-playpause">
+        Play
+      </button>
+      <!-- <button class="btn btn-secondary" id="btn-seek-forward" title="+10s">
+        +10s
+      </button> -->
+    </div>
+
+    <!-- Next episode -->
+    <div id="next-container">
+      <button class="btn btn-wide" id="btn-next">
+        Next episode
+      </button>
+    </div>
+
+    <!-- Volume controls -->
+    <div id="volume-container">
+      <button class="btn btn-vol" id="btn-vol-down">Vol -</button>
+      <div id="volume-display">
+        <div id="volume-bar">
+          <div id="volume-fill"></div>
+        </div>
+        <span id="volume-label">50%</span>
+      </div>
+      <button class="btn btn-vol" id="btn-vol-up">Vol +</button>
+    </div>
+
+  </div>
+  <script src="/app.js"></script>
+</body>
+</html>
