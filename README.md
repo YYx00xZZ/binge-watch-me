@@ -25,6 +25,15 @@ Double click `BingeWatchMe.app` in your Applications folder.
 
 You will see a **BWM** icon appear in your menu bar.
 
+### 3. Connect your phone
+
+When the app starts it automatically opens a setup page in your browser 
+showing a QR code.
+
+1. Open your phone camera
+2. Point it at the QR code
+3. Tap the link that appears
+4. The remote UI opens in your phone browser — you're connected
 
 ## Legal Disclaimer
 
