@@ -5,19 +5,20 @@ on:
     tags:
       - "v*"
 
+permissions:
+  contents: write
+
 jobs:
   build:
     strategy:
       matrix:
         include:
-          - os: macos-latest
-            target: aarch64-apple-darwin
-            artifact: binge-watch-me-macos-aarch64
-          - os: macos-latest
-            target: x86_64-apple-darwin
-            artifact: binge-watch-me-macos-x86_64
+          - target: aarch64-apple-darwin
+            artifact: BingeWatchMe-macos-arm64
+          - target: x86_64-apple-darwin
+            artifact: BingeWatchMe-macos-x86
 
-    runs-on: ${{ matrix.os }}
+    runs-on: macos-latest
 
     steps:
       - name: Checkout
@@ -33,25 +34,26 @@ jobs:
         with:
           key: ${{ matrix.target }}
 
-      - name: Build
-        run: cargo build --release --target ${{ matrix.target }}
+      - name: Install cargo-bundle
+        run: cargo install cargo-bundle
 
-      - name: Rename binary
+      - name: Build app bundle
+        run: cargo bundle --release --target ${{ matrix.target }}
+
+      - name: Package
         run: |
-          cp target/${{ matrix.target }}/release/binge-watch-me ${{ matrix.artifact }}
+          cd target/${{ matrix.target }}/release/bundle/osx
+          zip -r ../../../../../${{ matrix.artifact }}.zip BingeWatchMe.app
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.artifact }}
-          path: ${{ matrix.artifact }}
+          path: ${{ matrix.artifact }}.zip
 
   release:
     needs: build
     runs-on: ubuntu-latest
-
-    permissions:
-      contents: write
 
     steps:
       - name: Checkout
@@ -70,5 +72,5 @@ jobs:
           prerelease: false
           generate_release_notes: true
           files: |
-            artifacts/binge-watch-me-macos-aarch64/binge-watch-me-macos-aarch64
-            artifacts/binge-watch-me-macos-x86_64/binge-watch-me-macos-x86_64
+            artifacts/BingeWatchMe-macos-arm64/BingeWatchMe-macos-arm64.zip
+            artifacts/BingeWatchMe-macos-x86/BingeWatchMe-macos-x86.zip
