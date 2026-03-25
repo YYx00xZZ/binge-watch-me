@@ -1,3 +1,31 @@
+## Installation (macOS)
+
+### Requirements
+- macOS 12 or later
+- Brave or Chrome browser
+- iPhone or Android phone on the same Wi-Fi network
+
+### 1. Download the daemon
+
+Download the latest release for your Mac:
+
+- **Apple Silicon (M1/M2/M3/M4)** → `BingeWatchMe-macos-arm64.zip`
+- **Intel** → `BingeWatchMe-macos-x86.zip`
+
+Unzip it, then open Terminal and run:
+```bash
+xattr -cr BingeWatchMe.app
+```
+
+Move `BingeWatchMe.app` to your `/Applications` folder.
+
+### 2. Run the app
+
+Double click `BingeWatchMe.app` in your Applications folder.
+
+You will see a **BWM** icon appear in your menu bar.
+
+
 ## Legal Disclaimer
 
 This project is an independent, open-source tool and is not affiliated with,
