@@ -85,8 +85,8 @@ function formatTime(seconds) {
 
 // Button handlers
 document.getElementById("btn-playpause")   .addEventListener("click", () => send("play_pause"));
-document.getElementById("btn-seek-back")   .addEventListener("click", () => send("seek_backward", { seconds: 10 }));
-document.getElementById("btn-seek-forward").addEventListener("click", () => send("seek_forward",  { seconds: 10 }));
+// document.getElementById("btn-seek-back")   .addEventListener("click", () => send("seek_backward", { seconds: 10 }));
+// document.getElementById("btn-seek-forward").addEventListener("click", () => send("seek_forward",  { seconds: 10 }));
 document.getElementById("btn-next")        .addEventListener("click", () => send("next"));
 document.getElementById("btn-vol-down")    .addEventListener("click", () => send("volume_down"));
 document.getElementById("btn-vol-up")      .addEventListener("click", () => send("volume_up"));
