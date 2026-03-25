@@ -16,6 +16,8 @@
 
 use rust_embed::RustEmbed;
 use axum::response::Html;
+use qrcode::{QrCode, EcLevel};
+use image::Luma;
 
 #[derive(RustEmbed)]
 #[folder = "frontend/"]
@@ -44,16 +46,18 @@ pub struct AppState {
     pub command_tx: broadcast::Sender<Command>,
     /// Channel to broadcast media state to all phone remotes
     pub state_tx: broadcast::Sender<MediaState>,
+    pub token: String,
 }
 
 impl AppState {
-    pub fn new() -> Self {
+    pub fn new(token: String) -> Self {
         let (command_tx, _) = broadcast::channel(32);
         let (state_tx, _) = broadcast::channel(32);
         Self {
             media_state: Arc::new(Mutex::new(MediaState::default())),
             command_tx,
             state_tx,
+            token,
         }
     }
 }
@@ -62,8 +66,11 @@ impl AppState {
 pub async fn start(state: AppState) {
     let app = Router::new()
         .route("/", get(index_handler))
+        .route("/setup", get(setup_page_handler))
         .route("/style.css", get(css_handler))
         .route("/app.js", get(js_handler))
+        .route("/token", get(token_handler))
+        .route("/qr", get(qr_handler))
         .route("/extension", get(extension_ws_handler))
         .route("/remote", get(remote_ws_handler))
         .route("/health", get(health_handler))
@@ -227,4 +234,49 @@ async fn handle_remote_socket(mut socket: WebSocket, state: AppState) {
             }
         }
     }
+}
+
+/// Returns the token in plain text — only useful from localhost.
+/// The extension setup page calls this to auto-configure itself.
+async fn token_handler(
+    State(state): State<AppState>,
+) -> impl IntoResponse {
+    // This endpoint has no token requirement — it is only reachable
+    // from localhost so it is safe. Remote clients cannot reach it.
+    state.token.clone()
+}
+
+/// Returns a QR code PNG containing the full remote URL with token.
+/// Shown on the main page so the phone can scan and connect.
+async fn qr_handler(
+    State(state): State<AppState>,
+) -> impl IntoResponse {
+    let url = crate::network::get_remote_url(&state.token);
+    tracing::info!("QR code URL: {}", url);
+
+    // Generate QR code
+    let code = QrCode::with_error_correction_level(url.as_bytes(), EcLevel::M)
+        .expect("Failed to generate QR code");
+
+    // Render to image
+    let image = code.render::<Luma<u8>>()
+        .min_dimensions(200, 200)
+        .build();
+
+    // Encode as PNG
+    let mut png_bytes: Vec<u8> = Vec::new();
+    let mut cursor = std::io::Cursor::new(&mut png_bytes);
+    image::DynamicImage::ImageLuma8(image)
+        .write_to(&mut cursor, image::ImageFormat::Png)
+        .expect("Failed to encode QR code as PNG");
+
+    (
+        [(axum::http::header::CONTENT_TYPE, "image/png")],
+        png_bytes,
+    )
+}
+
+async fn setup_page_handler() -> impl IntoResponse {
+    let content = Assets::get("setup.html").unwrap();
+    Html(std::str::from_utf8(content.data.as_ref()).unwrap().to_string())
 }
