@@ -255,7 +255,7 @@ dependencies = [
 
 [[package]]
 name = "binge-watch-me"
-version = "0.1.0"
+version = "0.3.0-beta"
 dependencies = [
  "axum",
  "core-foundation 0.9.4",
