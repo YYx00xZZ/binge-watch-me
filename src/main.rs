@@ -22,6 +22,8 @@ mod server;
 mod tray;
 mod updater;
 
+use std::sync::{Arc, Mutex};
+
 fn main() {
     tracing_subscriber::fmt::init();
     tracing::info!("binge-watch-me starting...");
@@ -31,15 +33,25 @@ fn main() {
 
     let app_state = server::AppState::new(token);
 
-    tray::run(|| {
-        tracing::info!("Tray ready — spawning background services...");
+    // Shared slot: background checker writes an UpdateInfo here when a newer
+    // version is found; the tray timer reads it to show the menu item.
+    let update_available: Arc<Mutex<Option<updater::UpdateInfo>>> = Arc::new(Mutex::new(None));
 
-        let state = app_state.clone();
+    let state = app_state.clone();
+    let update_slot = update_available.clone();
+
+    tray::run(update_available, || {
+        tracing::info!("Tray ready — spawning background services...");
 
         std::thread::spawn(move || {
             tokio::runtime::Runtime::new()
                 .expect("Failed to create Tokio runtime")
-                .block_on(server::start(state));
+                .block_on(async move {
+                    // Start the update checker alongside the web server
+                    let checker_slot = update_slot.clone();
+                    tokio::spawn(updater::start_update_checker(checker_slot));
+                    server::start(state).await;
+                });
         });
 
         // Give the server a moment to start then open the setup page
